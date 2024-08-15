@@ -10,6 +10,7 @@ import Navbar from '../components/Navbar';
 import '../styles/globals.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Footer from '../components/Footer';
 
 // Create a client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -41,6 +42,7 @@ const MyApp: React.FC<MyAppProps> = (props) => {
         <main>
           <Component {...pageProps} />
         </main>
+		<Footer />
       </ThemeProvider>
     </CacheProvider>
   );
