@@ -72,7 +72,7 @@ const Footer: React.FC = () => {
 							</Link>
 						</Typography>
 						<Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-							&copy; {new Date().getFullYear()} Your Company Name. All rights reserved.
+							&copy; {new Date().getFullYear()} BrightonVi.be - All rights reserved.
 						</Typography>
 					</Box>
 				</Container>
