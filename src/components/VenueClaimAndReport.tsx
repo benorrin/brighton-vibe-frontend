@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Typography, Stack } from '@mui/material';
-import NextLink from 'next/link';
 
 const VenueClaimAndReport: React.FC = () => {
   return (
@@ -12,24 +11,22 @@ const VenueClaimAndReport: React.FC = () => {
 
       {/* Claim Business and Report Incorrect Information */}
       <Stack direction="row" spacing={2} sx={{ mb: 4 }}>
-        <NextLink href="/claim-business" passHref>
+        <a href="/claim-business" style={{ textDecoration: 'none' }}>
           <Typography 
-            component="a" 
             variant="body2" 
-            sx={{ color: 'text.secondary', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            sx={{ color: 'text.secondary', '&:hover': { textDecoration: 'underline' } }}
           >
             Claim This Business
           </Typography>
-        </NextLink>
-        <NextLink href="/contact-us" passHref>
+        </a>
+        <a href="/contact-us" style={{ textDecoration: 'none' }}>
           <Typography 
-            component="a" 
             variant="body2" 
-            sx={{ color: 'text.secondary', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            sx={{ color: 'text.secondary', '&:hover': { textDecoration: 'underline' } }}
           >
             Report Incorrect Information
           </Typography>
-        </NextLink>
+        </a>
       </Stack>
     </Box>
   );
