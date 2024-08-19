@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 interface VenueSliderProps {
-  images: string[];
+  images: string[] | null;
 }
 
 const CustomPrevArrow: React.FC<any> = ({ onClick }) => (
@@ -55,11 +55,40 @@ const VenueSlider: React.FC<VenueSliderProps> = ({ images }) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // Ensure this runs only on the client
+    setIsClient(true);
   }, []);
 
   // If not on the client, don't render the slider
   if (!isClient) return null;
+
+  // Render a placeholder image if the images array is null or empty
+  if (!images || images.length === 0) {
+    return (
+      <div
+        style={{
+          position: 'relative',
+          height: '400px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
+      >
+        <CardMedia
+          component="img"
+          alt="Placeholder Image"
+          image="/img/venue-placeholder.png"
+          title="Placeholder Image"
+          sx={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+          }}
+        />
+      </div>
+    );
+  }
 
   const settings = {
     dots: true,
@@ -78,7 +107,7 @@ const VenueSlider: React.FC<VenueSliderProps> = ({ images }) => {
           key={index}
           sx={{
             position: 'relative',
-            height: '400px', // Set a fixed height for the slider
+            height: '400px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -93,8 +122,8 @@ const VenueSlider: React.FC<VenueSliderProps> = ({ images }) => {
             sx={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover', // Ensure the image covers the container
-              objectPosition: 'center', // Center the image
+              objectFit: 'cover',
+              objectPosition: 'center',
             }}
           />
         </Card>
