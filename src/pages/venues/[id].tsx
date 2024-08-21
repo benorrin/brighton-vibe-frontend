@@ -135,7 +135,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		const venueResponse = await axios.get(`${process.env.API_URL}/venues/${id}`);
 		if (venueResponse.status !== 200 || !venueResponse.data) {
 			return { 
-				notFound: true // triggers a 404 page
+				notFound: true
 			};
 		}
 
@@ -145,7 +145,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 		const categoryResponse = await axios.get(`${process.env.API_URL}/venue-categories/${venue.categoryId}`);
 		if (categoryResponse.status !== 200 || !categoryResponse.data) {
 			return { 
-				notFound: true // triggers a 404 page
+				notFound: true
 			};
 		}
 
