@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { VenueType, VenueCard, VenueCategory } from '../types/venue';
+import { VenueCategory } from '../types/venue';
 
 const API_URL = process.env.API_URL;
-const ROOT_DOMAIN = process.env.ROOT_DOMAIN;
 
 /**
  * Fetches detailed information about a specific venue category from the API.
