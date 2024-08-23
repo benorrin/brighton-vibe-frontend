@@ -1,11 +1,36 @@
 export interface Venue {
 	id: string;
 	name: string;
+	venueType: VenueType,
+	venueCategory: VenueCategory,
 	summary: string;
 	description: string;
-	venueTypeId: string;
-	venueImages: { imageUrl: string }[];
-	venueOpeningHours?: { day: string; hours: string }[];
+	venueImages: VenueImage[];
+	venueOpeningHours?: VenueOpeningHours[];
+	similarVenues: VenueSummary[];
+}
+
+export interface VenueSummary {
+	slug: string;
+	name: string;
+	venueImages: VenueImage[];
+}
+
+export interface VenueImage {
+    id: string;
+    venueId: string;
+    imageUrl: string;
+    featured: boolean;
+    description: string;
+    createdAt: Date;
+}
+
+export interface VenueOpeningHours {
+    id: string;
+    venueId: string;
+    weekDay: number;
+    openingTime: string;
+    closingTime: string;
 }
   
 export interface VenueType {
@@ -32,8 +57,6 @@ export interface VenueCard {
   
 export interface VenueProps {
 	venue: Venue | null;
-	type: VenueType | null;
-	similarVenues: VenueCard[] | null;
 	error: string | null;
 }
 

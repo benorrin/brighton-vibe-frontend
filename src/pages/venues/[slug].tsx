@@ -8,14 +8,9 @@ import SidebarRecommendedPosts from '../../components/SidebarRecommendedPosts';
 import CardCarousel from '../../components/CardCarousel';
 import VenueOpeningHours from '../../components/VenueOpeningHours';
 import { GetServerSideProps } from 'next';
-import axios from 'axios';
-
-interface VenueProps {
-	venue: any | null;
-	category: any | null;
-	similarVenues: any | null;
-	error: string | null;
-}
+import { VenueProps } from '../../types/venue';
+import { fetchVenue } from '../../api/venue';
+import { getErrorMessage } from '../../utils/error';
 
 const styles = {
 	container: {
@@ -45,14 +40,15 @@ const ErrorPage: React.FC<{ message: string }> = ({ message }) => (
 	</Box>
 );
 
-const VenueContent: React.FC<{ venue: any; isClient: boolean; category: any; similarVenues: any }> = ({ venue, isClient, category, similarVenues }) => (
+const VenueContent: React.FC<{ venue: any; isClient: boolean }> = ({ venue, isClient }) => (
 	<Box sx={styles.container}>
 		{/* Breadcrumbs */}
 		<Box sx={{ width: '100%', mb: 4 }}>
 			<Breadcrumbs
 				items={[
 				{ label: 'Home', href: '/' },
-				{ label: category.name, href: '/' + category.slug },
+				{ label: venue.venueCategory.name, href: '/' + venue.venueCategory.slug },
+				{ label: venue.venueType.name, href: '/' + venue.venueType.slug },
 				{ label: venue.name },
 				]}
 			/>
@@ -102,15 +98,15 @@ const VenueContent: React.FC<{ venue: any; isClient: boolean; category: any; sim
 		{isClient && (
 		<CardCarousel
 			title="Similar places"
-			cards={similarVenues}
-			seeMoreLink={`${process.env.ROOT_DOMAIN}/${category.slug}`}
+			venues={venue.similarVenues}
+			seeMoreLink={`${process.env.ROOT_DOMAIN}/${venue.venueType.slug}`}
 		/>
 		)}
 
 	</Box>
 );
 
-const Venue: React.FC<VenueProps> = ({ venue, category, similarVenues, error }) => {
+const Venue: React.FC<VenueProps> = ({ venue, error }) => {
 	const [isClient, setIsClient] = useState(false);
 
 	useEffect(() => {
@@ -125,78 +121,31 @@ const Venue: React.FC<VenueProps> = ({ venue, category, similarVenues, error }) 
 		return <ErrorPage message="404 - Page Not Found" />;
 	}
 
-	return<VenueContent venue={venue} isClient={isClient} category={category} similarVenues={similarVenues} />;
+	return<VenueContent venue={venue} isClient={isClient} />;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-	const { id } = context.params!;
+	const slugParam = context.params?.slug;
+
+	const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
+	
 	try {
-		// Fetch venue
-		const venueResponse = await axios.get(`${process.env.API_URL}/venues/${id}`);
-		if (venueResponse.status !== 200 || !venueResponse.data) {
-			return { 
-				notFound: true
-			};
-		}
-
-		const venue = venueResponse.data;
-
-		// Fetch venue category
-		const categoryResponse = await axios.get(`${process.env.API_URL}/venue-categories/${venue.categoryId}`);
-		if (categoryResponse.status !== 200 || !categoryResponse.data) {
-			return { 
-				notFound: true
-			};
-		}
-
-		const category = categoryResponse.data;
-
-		// Fetch similar venues by category
-		const similarVenuesResponse = await axios.get(`${process.env.API_URL}/venues/category/${venue.categoryId}`);
-		if (similarVenuesResponse.status !== 200 || !similarVenuesResponse.data) {
-			return { 
-				props: { 
-					venue, 
-					category, 
-					similarVenues: null, 
-					error: 'Similar venues not found.' 
-				} 
-			};
-		}
-
-		const transformData = (data: any) => data.map((item: any) => ({
-			name: item.name,
-			image: item.venueImages.length > 0 ? item.venueImages[0].imageUrl : 'https://via.placeholder.com/200',
-			link: `${process.env.ROOT_DOMAIN}/venues/${item.slug}`
-		}));
-
-		const similarVenues = transformData(similarVenuesResponse.data);
+		const venue = await fetchVenue(slug);
 
 		return { 
 			props: { 
-				venue, 
-				category, 
-				similarVenues, 
+				venue,
 				error: null 
 			} 
 		};
 
 	} catch (error) {
-		if (axios.isAxiosError(error) && error.response) {
-			// Handle different error responses
-			if (error.response.status === 404) {
-				return { notFound: true };
-			}
-			if (error.response.status === 500) {
-				return { props: { venue: null, category: null, similarVenues: null, error: 'Internal Server Error.' } };
-			}
-		}
+		// Handle errors by returning an error message as props
+		const errorMessage = getErrorMessage(error);
 		return { 
 			props: { 
-				venue: null, 
-				category: null, 
-				similarVenues: null, 
-				error: 'An error occurred.' 
+				venue: null,
+				error: errorMessage 
 			} 
 		};
 	}

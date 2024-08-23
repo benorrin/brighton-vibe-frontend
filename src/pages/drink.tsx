@@ -4,10 +4,8 @@ import Head from 'next/head';
 import Breadcrumbs from '../components/Breadcrumbs';
 import CardCarousel from '../components/CardCarousel';
 import { GetServerSideProps } from 'next';
-import axios from 'axios';
-import { VenueCard, VenueType, VenueCategoryProps } from '../types/venue';
+import { VenueCategoryProps } from '../types/venue';
 import { fetchVenueCategory } from '../api/venueCategory';
-import { transformVenueTypes } from '../utils/transformations';
 import { getErrorMessage } from '../utils/error';
 
 // Define common styles used across the page
@@ -53,7 +51,7 @@ const DrinkPageContent: React.FC<{ venueCategory }> = ({ venueCategory }) => (
 				<CardCarousel
 					key={type.slug}
 					title={type.name}
-					cards={type.venues}
+					venues={type.venues}
 					seeMoreLink={type.slug}
 				/>
 			))}
@@ -78,22 +76,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
 		const categorySlug = 'drink';
 
 		// Fetch the venue category data from the API
-		const data = await fetchVenueCategory(categorySlug);
-
-		// Transform the fetched data for use in the component
-		const venueCategory = {
-			id: data.id,
-			slug: data.slug,
-			name: data.name,
-			description: data.description,
-			venueTypes: transformVenueTypes(data.venueTypes)
-		};
+		const venueCategory = await fetchVenueCategory(categorySlug);
   
 		return { 
 			props: { 
 				venueCategory,
 				error: null
-			} 
+			}
 		};
   
 	} catch (error) {
