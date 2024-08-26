@@ -5,3 +5,8 @@ export interface CardCarouselProps {
 	venues: VenueSummary[];
 	seeMoreLink: string;
 }
+
+export interface CardGridProps {
+	title: string;
+	venues: VenueSummary[];
+}

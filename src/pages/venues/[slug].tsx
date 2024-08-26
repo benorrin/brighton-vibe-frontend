@@ -48,7 +48,7 @@ const VenueContent: React.FC<{ venue: any; isClient: boolean }> = ({ venue, isCl
 				items={[
 				{ label: 'Home', href: '/' },
 				{ label: venue.venueCategory.name, href: '/' + venue.venueCategory.slug },
-				{ label: venue.venueType.name, href: '/' + venue.venueType.slug },
+				{ label: venue.venueType.name, href: '/types/' + venue.venueType.slug },
 				{ label: venue.name },
 				]}
 			/>
@@ -99,7 +99,7 @@ const VenueContent: React.FC<{ venue: any; isClient: boolean }> = ({ venue, isCl
 		<CardCarousel
 			title="Similar places"
 			venues={venue.similarVenues}
-			seeMoreLink={`${process.env.ROOT_DOMAIN}/${venue.venueType.slug}`}
+			seeMoreLink={venue.venueType.slug}
 		/>
 		)}
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import Head from 'next/head';
-import Breadcrumbs from '../components/Breadcrumbs';
-import CardCarousel from '../components/CardCarousel'; // Use CardCarousel here
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { GetServerSideProps } from 'next';
-import { VenueCategoryProps } from '../types/venue';
-import { fetchVenueCategory } from '../api/venueCategory';
-import { getErrorMessage } from '../utils/error';
+import { VenueType, VenueTypeProps } from '../../types/venue';
+import { fetchVenueType } from '../../api/venueType';
+import { getErrorMessage } from '../../utils/error';
+import CardGrid from '../../components/CardGrid';
 
 // Define common styles used across the page
 const styles = {
@@ -29,60 +29,57 @@ const ErrorPage: React.FC<{ message: string }> = ({ message }) => (
 );
 
 // Component to render the main content of the Eat page
-const EatPageContent: React.FC<{ venueCategory }> = ({ venueCategory }) => (
+const VenueTypeContent: React.FC<{ venueType }> = ({ venueType }) => (
 	<>
 		<Head>
-			<meta name="description" content={venueCategory.description} />
-			<title>Discover the Best Restaurants, Cafes, and Dining Spots in Brighton & Hove - Brighton Vibe</title>
+			<meta name="description" content={venueType.description} />
+			<title>Discover the Best Restaurants and Cafés in Brighton & Hove - Brighton Vibe</title>
 		</Head>
 		<Container>
 			{/* Breadcrumbs for navigation */}
 			<Box sx={{ width: '100%', mb: 4 }}>
 				<Breadcrumbs
 					items={[
-						{ label: 'Home', href: '/' },
-						{ label: 'Eat', href: '/eat' }
+					{ label: 'Home', href: '/' },
+					{ label: venueType.venueCategory.name, href: '/' + venueType.venueCategory.slug },
+					{ label: venueType.name },
 					]}
 				/>
 			</Box>
 
-			{/* Dynamically render CardCarousels based on venueTypes */}
-			{venueCategory.venueTypes.map((type) => (
-				<CardCarousel
-					key={type.slug}
-					title={type.name}
-					venues={type.venues}
-					seeMoreLink={`/eat/${type.slug}`} // Update this link as needed
-				/>
-			))}
+			{/* Card Grid */}
+			<CardGrid title={venueType.name} venues={venueType.venues} />
+
 		</Container>
 	</>
 );
 
 // Main page component that decides which content to render based on props
-const EatPage: React.FC<VenueCategoryProps> = ({ venueCategory, error }) => {
+const VenueTypePage: React.FC<VenueTypeProps> = ({ venueType, error }) => {
 	if (error) {
 		// Render the error page if there is an error
 		return <ErrorPage message={error} />;
 	}
 
 	// Render the main content if there is no error
-	return <EatPageContent venueCategory={venueCategory} />;
+	return <VenueTypeContent venueType={venueType} />;
 };
 
 // Fetch data on the server side before rendering the page
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
 	try {
-		const categorySlug = 'eat';
+		const slugParam = context.params?.slug;
 
-		// Fetch the venue category data from the API
-		const venueCategory = await fetchVenueCategory(categorySlug);
+		const typeSlug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
+
+		// Fetch the venue type data from the API
+		const venueType = await fetchVenueType(typeSlug);
   
 		return { 
 			props: { 
-				venueCategory,
+				venueType,
 				error: null
-			}
+			} 
 		};
   
 	} catch (error) {
@@ -90,11 +87,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
 		const errorMessage = getErrorMessage(error);
 		return { 
 			props: { 
-				venueCategory: null,
+				venueType: null,
 				error: errorMessage 
 			} 
 		};
 	}
 };
 
-export default EatPage;
+export default VenueTypePage;

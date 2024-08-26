@@ -1,10 +1,17 @@
 export interface Venue {
 	id: string;
+	slug: string;
 	name: string;
 	venueType: VenueType,
 	venueCategory: VenueCategory,
 	summary: string;
 	description: string;
+	address: string;
+	phoneNumber: string;
+	emailAddress: string;
+	website: string;
+	instagram: string;
+	facebook: string;
 	venueImages: VenueImage[];
 	venueOpeningHours?: VenueOpeningHours[];
 	similarVenues: VenueSummary[];
@@ -61,7 +68,8 @@ export interface VenueProps {
 }
 
 export interface VenueTypeProps {
-
+	venueType: VenueType | null;
+	error: string | null;
 }
   
 export interface VenueCategoryProps {
