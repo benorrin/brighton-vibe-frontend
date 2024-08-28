@@ -1,77 +1,117 @@
-// src/pages/about.tsx
-import * as React from 'react';
-import { Container, Typography, Box, Button, Link as MuiLink } from '@mui/material';
+import React from 'react';
+import { Box, Container, Typography } from '@mui/material';
+import Head from 'next/head';
+import NextLink from 'next/link';
+import Hero from '../components/Hero';
+
+// Define common styles used across the page
+const styles = {
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        maxWidth: '1200px',
+        mx: 'auto',
+        mt: 6,
+        mb: 6,
+    },
+    content: {
+        maxWidth: '800px',
+        textAlign: 'center',
+        px: 2,
+    },
+    heading: {
+        fontSize: '2rem',
+        fontWeight: 'bold',
+        mb: 2,
+    },
+    paragraph: {
+        fontSize: '1.2rem',
+        mb: 3,
+        lineHeight: '1.6',
+    },
+    section: {
+        mb: 6,
+    },
+    link: {
+        color: '#1976D2',
+        textDecoration: 'none',
+        '&:hover': {
+            textDecoration: 'underline',
+        },
+    },
+};
 
 const AboutPage: React.FC = () => {
-  return (
-    <Container maxWidth="md">
-      {/* Hero Section */}
-      <Box
-        sx={{
-          textAlign: 'center',
-          my: 4,
-          py: 4,
-          px: 2,
-          backgroundColor: '#f5f5f5',
-          borderRadius: 2,
-        }}
-      >
-        <Typography variant="h3" component="h1" gutterBottom>
-          About Brighton Vibe
-        </Typography>
-        <Typography variant="h6" color="textSecondary" paragraph>
-          Discover the best of Brighton with ease. Explore local venues, events, and more!
-        </Typography>
-        <Button variant="contained" color="primary" href="/">
-          Back to Home
-        </Button>
-      </Box>
+    return (
+        <>
+            <Head>
+                <meta name="description" content="Learn more about Brighton Vibe, your ultimate guide to Brighton & Hove." />
+                <title>About Us - Brighton Vibe</title>
+            </Head>
+            
+            <Container sx={styles.container}>
+                {/* Hero Section */}
+                <Hero
+                    title="About Brighton Vibe"
+                    description="Discover who we are, our mission, and our vision for the future."
+                />
 
-      {/* Content Section */}
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h2" gutterBottom>
-          Our Story
-        </Typography>
-        <Typography variant="body1" paragraph>
-          Having recently moved to Brighton, we were amazed by the vibrant local scene this city has to offer. From delightful eateries and charming shops to bustling bars and unique venues, Brighton is truly a city full of hidden gems. However, finding the best places to eat, drink, and shop, as well as staying updated on all the exciting events happening around town, proved to be a challenge.
-        </Typography>
-        <Typography variant="body1" paragraph>
-          That’s why we created <strong>Brighton Vibe</strong>. Our mission is to make it easier for you to discover and enjoy the best of Brighton. Whether you’re a local or a visitor, our website is designed to be your go-to resource for finding exceptional venues and events in this fantastic city.
-        </Typography>
+                {/* Mission Section */}
+                <Box sx={styles.section}>
+                    <Typography variant="h2" sx={styles.heading}>
+                        Our Mission
+                    </Typography>
+                    <Typography variant="body1" sx={styles.paragraph}>
+                        At Brighton Vibe, our mission is to showcase the best local businesses and hotspots in Brighton & Hove. We provide a comprehensive guide to the city's dining, entertainment, and leisure options, ensuring that both residents and visitors can discover and enjoy the finest experiences our city has to offer.
+                    </Typography>
+                    <Typography variant="body1" sx={styles.paragraph}>
+                        We are dedicated to curating the most relevant and up-to-date information about Brighton & Hove's vibrant scene. From hidden gems to popular spots, our goal is to connect people with the places they’ll love.
+                    </Typography>
+                </Box>
 
-        <Typography variant="h4" component="h2" gutterBottom>
-          What We Do
-        </Typography>
-        <Typography variant="body1" paragraph>
-          <strong>Brighton Vibe</strong> is the only website of its kind dedicated to showcasing and championing local businesses. We strive to gather and present comprehensive information about Brighton's venues, from restaurants and pubs to shops and entertainment spots. Our goal is to provide a central hub where you can find not only the top places to visit but also the latest and most exciting events happening throughout the city.
-        </Typography>
+                {/* What We Offer Section */}
+                <Box sx={styles.section}>
+                    <Typography variant="h2" sx={styles.heading}>
+                        What We Offer
+                    </Typography>
+                    <Typography variant="body1" sx={styles.paragraph}>
+                        Brighton Vibe currently offers detailed information on a variety of local businesses, including restaurants, bars, cafes, and more. Our platform is designed to help you find the perfect place to eat, drink, and enjoy your time in the city.
+                    </Typography>
+                    <Typography variant="body1" sx={styles.paragraph}>
+                        In the future, we plan to expand our offerings by adding user accounts, allowing local businesses and residents to contribute their own content. We also aim to incorporate event listings and updates, ensuring that you are always informed about the latest happenings in Brighton & Hove.
+                    </Typography>
+                </Box>
 
-        <Typography variant="h4" component="h2" gutterBottom>
-          Our Commitment
-        </Typography>
-        <Typography variant="body1" paragraph>
-          We are committed to serving the people of Brighton by offering a user-friendly platform that puts all this valuable information in one easy-to-find place. Our site is continuously updated to ensure you have the most current and relevant details at your fingertips.
-        </Typography>
+                {/* Report Incorrect Information or Abuse Section */}
+                <Box sx={styles.section}>
+                    <Typography variant="h2" sx={styles.heading}>
+                        Report Incorrect Information or Abuse
+                    </Typography>
+                    <Typography variant="body1" sx={styles.paragraph}>
+                        We strive to maintain the highest quality and accuracy in our listings. If you come across incorrect information or suspect any abuse, please let us know by reaching out to us through our <NextLink href="/contact" passHref><Typography component="a" sx={styles.link}>contact</Typography></NextLink> page.
+                    </Typography>
+                    <Typography variant="body1" sx={styles.paragraph}>
+                        Our strict policy ensures that only the best businesses are featured. Unscrupulous businesses can be reported, and their listings will be reviewed and removed if necessary.
+                    </Typography>
+                </Box>
 
-        <Typography variant="h4" component="h2" gutterBottom>
-          For Makers and Academics
-        </Typography>
-        <Typography variant="body1" paragraph>
-          In addition to serving our local community, we are passionate about supporting makers and academics. Our API is open and available upon request for those who want to integrate our data into their own projects or conduct research.
-        </Typography>
-      </Box>
+                {/* Join Us Section */}
+                <Box sx={styles.section}>
+                    <Typography variant="h2" sx={styles.heading}>
+                        Join Us
+                    </Typography>
+                    <Typography variant="body1" sx={styles.paragraph}>
+                        We invite you to explore Brighton Vibe and discover the best of Brighton & Hove. If you have any suggestions, feedback, or if you're interested in contributing to our platform, we would love to hear from you. Stay tuned for exciting updates as we continue to enhance our guide with new features and content.
+                    </Typography>
+                </Box>
 
-      {/* Contact Section */}
-      <Box sx={{ my: 4, textAlign: 'center' }}>
-        <Typography variant="body1" paragraph>
-          Thank you for visiting <strong>Brighton Vibe</strong>. We hope you find our site helpful in exploring all that Brighton has to offer. If you have any questions or suggestions, feel free to reach out to us!
-        </Typography>
-        <MuiLink href="/" variant="body2">
-          Back to Home
-        </MuiLink>
-      </Box>
-    </Container>
-  );
+                <Typography variant="body1" sx={styles.paragraph}>
+                    Thank you for visiting Brighton Vibe. We look forward to helping you explore and enjoy our wonderful city!
+                </Typography>
+            </Container>
+        </>
+    );
 };
 
 export default AboutPage;
