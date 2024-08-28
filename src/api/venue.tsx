@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Venue } from '../types/venue';
+import { Venue, VenueCard } from '../types/venue';
 
 const API_URL = process.env.API_URL;
 
@@ -33,6 +33,26 @@ export const fetchVenue = async (venueSlug: string | null | undefined): Promise<
 	} catch (error) {
 		throw new Error('Failed to fetch from the API');
 	}
+};
+
+/**
+ * Asynchronously fetches a list of recently added venues from the API.
+ * 
+ * This function makes an HTTP GET request to the API endpoint for recently added venues. If the request is successful (status code 200),
+ * it returns the data in the form of an array of `VenueCard` objects. If the request fails or returns an error status, 
+ * it throws an exception with an error message indicating the failure.
+ * 
+ * @returns {Promise<VenueCard[]>} A promise that resolves to an array of `VenueCard` objects representing the recently added venues.
+ * @throws {Error} Throws an error if the HTTP response status is not 200, indicating a failure in fetching the data.
+ */
+export const fetchRecentlyAddedVenues = async (): Promise<VenueCard[]> => {
+	const response = await axios.get(`${API_URL}/venues/recent`);
+
+	if (response.status !== 200) {
+		throw new Error('Failed to fetch venue data');
+	}
+
+	return response.data;
 };
 
 /**

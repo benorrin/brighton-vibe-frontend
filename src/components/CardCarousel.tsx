@@ -48,7 +48,7 @@ const CardCarousel: React.FC<CardCarouselProps> = ({ title, venues, seeMoreLink 
 
             {/* See More */}
             <Box sx={{ mt: 2 }}>
-                <NextLink href={`/types/${seeMoreLink}`} passHref>
+                <NextLink href={`${seeMoreLink}`} passHref>
                     <Button variant="outlined" color="primary">
                         See More
                     </Button>

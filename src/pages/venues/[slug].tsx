@@ -99,7 +99,7 @@ const VenueContent: React.FC<{ venue: any; isClient: boolean }> = ({ venue, isCl
 		<CardCarousel
 			title="Similar places"
 			venues={venue.similarVenues}
-			seeMoreLink={venue.venueType.slug}
+			seeMoreLink={`/types/${venue.venueType.slug}`}
 		/>
 		)}
 

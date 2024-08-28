@@ -1,135 +1,95 @@
-import * as React from 'react';
-import { Grid, Card, CardContent, Container, Typography, Box, Button } from '@mui/material';
-import CardList from '../components/CardList';
+import React from 'react';
+import { Box, Container, Typography } from '@mui/material';
+import Head from 'next/head';
+import CardCarousel from '../components/CardCarousel';
+import { GetServerSideProps } from 'next';
+import { getErrorMessage } from '../utils/error';
+import { fetchRecentlyAddedVenues } from '../api/venue';
+import { HomePageProps } from '../types/home';
+import HomeHero from '../components/HomeHero'; // Import the HomeHero component
+import VenueTypeLinks from '../components/VenueTypeLinks'; // Import VenueTypeLinks component
 
-interface VenueDto {
-	id: string;
-	name: string;
-	address: string;
-	phoneNumber?: string;
-	emailAddress?: string;
-	website?: string;
-	instagram?: string;
-	facebook?: string;
-}
-
-interface CardData {
-	id: string;
-	name: string;
-	description: string;
-	link?: string;
-}
-
-const HomePage: React.FC = () => {
-	const [cards, setCards] = React.useState<CardData[]>([]);
-	const [loading, setLoading] = React.useState<boolean>(true);
-
-	React.useEffect(() => {
-		const fetchCards = async () => {
-			try {
-				const response = await fetch('http://localhost:5295/venues');
-				const data: VenueDto[] = await response.json();
-				
-				const transformedCards: CardData[] = data.map((venue) => ({
-					id: venue.id,
-					name: venue.name,
-					description: venue.address,
-					link: venue.website,
-				}));
-				setCards(transformedCards);
-			} catch (error) {
-				console.error('Error fetching data:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchCards();
-	}, []);
-
-	if (loading) {
-		return(
-			<Container>
-				<Typography variant="h6">Loading...</Typography>
-			</Container>
-		);
-	}
-
-	return (
-		<Container>
-			<Box sx={{ textAlign: 'center', py: 8 }}>
-				<Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-					Experience your music <br /> like never before.
-				</Typography>
-				<Typography variant="h6" color="textSecondary" sx={{ mb: 4 }}>
-					Supper offer till the end of June. All the original headphones at maximum:
-				</Typography>
-				<Typography variant="h3" component="p" sx={{ color: 'red', fontWeight: 'bold', mb: 4 }}>
-					$299.95
-				</Typography>
-				<Button variant="contained" color="primary" size="large" sx={{ mb: 4 }}>
-					Discover the offer
-				</Button>
-				<Typography variant="body1" color="textSecondary">
-					$60 Apple Music gift card with purchase of select Beats products.*
-				</Typography>
-			</Box>
-
-			<Grid container spacing={4} justifyContent="center">
-				<Grid item xs={12} sm={6} md={4}>
-					<Card>
-						<CardContent>
-							<Box
-							component="img"
-							sx={{ maxHeight: 200, maxWidth: '100%' }}
-							src="/path-to-your-image/headphones.png" // Update this with your image path
-							alt="Headphones"
-							/>
-						</CardContent>
-					</Card>
-				</Grid>
-				<Grid item xs={12} sm={6} md={4}>
-					<Card>
-						<CardContent>
-							<Box
-							component="img"
-							sx={{ maxHeight: 200, maxWidth: '100%' }}
-							src="/path-to-your-image/speaker.png" // Update this with your image path
-							alt="Speaker"
-							/>
-						</CardContent>
-					</Card>
-				</Grid>
-			</Grid>
-			
-			<Box sx={{ my: 4 }}>
-				<Typography variant="h3" component="h1" gutterBottom>
-					Welcome to the Venue App
-				</Typography>
-				<Typography variant="body1" paragraph>
-					Explore the best venues in town. Browse through categories and discover the perfect place for your next event.
-				</Typography>
-				<Button variant="contained" color="primary">
-					Get Started
-				</Button>
-			</Box>
-
-			{/* Example sections */}
-			<CardList
-			title="Recently Added"
-			cards={cards.slice(0, 5)} // Example: show first 5 cards
-			buttonLabel="View More"
-			buttonLink="/venues" // Adjust the link as needed
-			/>
-			
-			<CardList
-			title="Popular Venues"
-			cards={cards.slice(5, 10)} // Example: show next 5 cards
-			buttonLabel="View More"
-			buttonLink="/popular-venues" // Adjust the link as needed
-			/>
-		</Container>
-	);
+// Define common styles used across the page
+const styles = {
+	container: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		maxWidth: '1200px',
+		mx: 'auto',
+	},
+	mb: 4,
+	mt: 6,
 };
 
-export default HomePage;
+// Component to display an error message
+const ErrorPage: React.FC<{ message: string }> = ({ message }) => (
+	<Box sx={{ ...styles.container, mt: 10 }}>
+		<Typography variant="h1" color="error">{message}</Typography>
+	</Box>
+);
+
+// Component to render the main content of the Index page
+const IndexPageContent: React.FC<{ recentlyAdded }> = ({ recentlyAdded }) => (
+	<>
+		<Head>
+			<meta name="description" content="Discover the best places to eat, drink, stay, and enjoy in Brighton & Hove." />
+			<title>Brighton Vibe - Your Ultimate Guide to Brighton & Hove</title>
+		</Head>
+		
+		<Container id="explore">
+			{/* Hero Section */}
+			<HomeHero />
+
+			{/* Venue Type Links */}
+			<VenueTypeLinks />
+
+			{/* Dynamically render CardCarousels for each category */}
+			<CardCarousel
+				key="recently-added"
+				title="Recently Added"
+				venues={recentlyAdded}
+				seeMoreLink="/recent"
+			/>
+		</Container>
+	</>
+);
+
+// Main page component that decides which content to render based on props
+const IndexPage: React.FC<HomePageProps> = ({ recentlyAdded, error }) => {
+	if (error) {
+		// Render the error page if there is an error
+		return <ErrorPage message={error} />;
+	}
+
+	// Render the main content if there is no error
+	return <IndexPageContent recentlyAdded={recentlyAdded} />;
+};
+
+// Fetch data on the server side before rendering the page
+export const getServerSideProps: GetServerSideProps = async () => {
+	try {
+		const recentVenues = await fetchRecentlyAddedVenues();
+
+		const summaryRecentVenues = recentVenues.slice(0, 4);
+
+		return { 
+			props: { 
+				recentlyAdded: summaryRecentVenues,
+				error: null
+			}
+		};
+  
+	} catch (error) {
+		// Handle errors by returning an error message as props
+		const errorMessage = getErrorMessage(error);
+		return { 
+			props: { 
+				recentlyAdded: null,
+				error: errorMessage 
+			} 
+		};
+	}
+};
+
+export default IndexPage;

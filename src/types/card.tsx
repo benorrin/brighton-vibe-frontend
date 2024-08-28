@@ -7,6 +7,6 @@ export interface CardCarouselProps {
 }
 
 export interface CardGridProps {
-	title: string;
+	title?: string;
 	venues: VenueSummary[];
 }

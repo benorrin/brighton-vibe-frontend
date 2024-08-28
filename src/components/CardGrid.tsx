@@ -6,9 +6,12 @@ import { CardGridProps } from '../types/card';
 const CardGrid: React.FC<CardGridProps> = ({ title, venues }) => {
     return (
         <Box sx={{ mb: 6 }}>
-            <Typography variant="h4" component="h2" gutterBottom>
-                {title}
-            </Typography>
+            {/* Conditionally render the title if it is provided */}
+            {title && (
+                <Typography variant="h4" component="h2" gutterBottom>
+                    {title}
+                </Typography>
+            )}
 
             <Grid container spacing={2}>
                 {venues.map((venue, index) => {

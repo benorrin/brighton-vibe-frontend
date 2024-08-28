@@ -7,6 +7,7 @@ import { VenueType, VenueTypeProps } from '../../types/venue';
 import { fetchVenueType } from '../../api/venueType';
 import { getErrorMessage } from '../../utils/error';
 import CardGrid from '../../components/CardGrid';
+import Hero from '../../components/Hero';
 
 // Define common styles used across the page
 const styles = {
@@ -47,8 +48,11 @@ const VenueTypeContent: React.FC<{ venueType }> = ({ venueType }) => (
 				/>
 			</Box>
 
+			{/* Hero Section */}
+			<Hero title={venueType.name} description={venueType.description} />
+
 			{/* Card Grid */}
-			<CardGrid title={venueType.name} venues={venueType.venues} />
+			<CardGrid venues={venueType.venues} />
 
 		</Container>
 	</>

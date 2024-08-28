@@ -2,11 +2,10 @@ import React from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import Head from 'next/head';
 import Breadcrumbs from '../components/Breadcrumbs';
-import CardCarousel from '../components/CardCarousel';
 import { GetServerSideProps } from 'next';
-import { VenueCategoryProps } from '../types/venue';
-import { fetchVenueCategory } from '../api/venueCategory';
+import { fetchRecentlyAddedVenues } from '../api/venue'; // Import the function to fetch recent venues
 import { getErrorMessage } from '../utils/error';
+import CardGrid from '../components/CardGrid';
 import Hero from '../components/Hero';
 
 // Define common styles used across the page
@@ -29,12 +28,12 @@ const ErrorPage: React.FC<{ message: string }> = ({ message }) => (
 	</Box>
 );
 
-// Component to render the main content of the Drink page
-const DrinkPageContent: React.FC<{ venueCategory }> = ({ venueCategory }) => (
+// Component to render the main content of the Recent page
+const RecentPageContent: React.FC<{ recentVenues }> = ({ recentVenues }) => (
 	<>
 		<Head>
-			<meta name="description" content={venueCategory.description} />
-			<title>Discover the Best Pubs, Bars, and Clubs in Brighton & Hove - Brighton Vibe</title>
+			<meta name="description" content="Explore the latest venues added to Brighton Vibe." />
+			<title>Recent Venues - Brighton Vibe</title>
 		</Head>
 		<Container>
 			{/* Breadcrumbs for navigation */}
@@ -42,54 +41,47 @@ const DrinkPageContent: React.FC<{ venueCategory }> = ({ venueCategory }) => (
 				<Breadcrumbs
 					items={[
 						{ label: 'Home', href: '/' },
-						{ label: 'Drink', href: '/drink' }
+						{ label: 'Recent' }
 					]}
 				/>
 			</Box>
 
-			{/* Hero */}
+			{/* Hero Section */}
 			<Hero 
-				title="Find Your Perfect Drink Spot" 
-				description="From cozy pubs to lively bars, explore the best places to enjoy a drink in Brighton & Hove."
+				title="Recent Venues" 
+				description="Discover the latest venues added to Brighton Vibe."
 			/>
 
-			{/* Dynamically render CardCarousels based on venueTypes */}
-			{venueCategory.venueTypes.map((type) => (
-				<CardCarousel
-					key={type.slug}
-					title={type.name}
-					venues={type.venues}
-					seeMoreLink={`/types/${type.slug}`}
-				/>
-			))}
+			{/* Card Grid */}
+			<CardGrid 
+				venues={recentVenues} 
+			/>
 		</Container>
 	</>
 );
 
 // Main page component that decides which content to render based on props
-const DrinkPage: React.FC<VenueCategoryProps> = ({ venueCategory, error }) => {
+const RecentPage: React.FC<{ recentVenues; error }> = ({ recentVenues, error }) => {
 	if (error) {
 		// Render the error page if there is an error
 		return <ErrorPage message={error} />;
 	}
 
 	// Render the main content if there is no error
-	return <DrinkPageContent venueCategory={venueCategory} />;
+	return <RecentPageContent recentVenues={recentVenues} />;
 };
 
 // Fetch data on the server side before rendering the page
 export const getServerSideProps: GetServerSideProps = async () => {
 	try {
-		const categorySlug = 'drink';
+		// Fetch the recently added venues from the API
+		const recentVenues = await fetchRecentlyAddedVenues();
 
-		// Fetch the venue category data from the API
-		const venueCategory = await fetchVenueCategory(categorySlug);
-  
 		return { 
 			props: { 
-				venueCategory,
+				recentVenues,
 				error: null
-			}
+			} 
 		};
   
 	} catch (error) {
@@ -97,11 +89,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
 		const errorMessage = getErrorMessage(error);
 		return { 
 			props: { 
-				venueCategory: null,
+				recentVenues: null,
 				error: errorMessage 
 			} 
 		};
 	}
 };
 
-export default DrinkPage;
+export default RecentPage;

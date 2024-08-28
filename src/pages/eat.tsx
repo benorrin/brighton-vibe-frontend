@@ -7,6 +7,7 @@ import { GetServerSideProps } from 'next';
 import { VenueCategoryProps } from '../types/venue';
 import { fetchVenueCategory } from '../api/venueCategory';
 import { getErrorMessage } from '../utils/error';
+import Hero from '../components/Hero';
 
 // Define common styles used across the page
 const styles = {
@@ -46,13 +47,19 @@ const EatPageContent: React.FC<{ venueCategory }> = ({ venueCategory }) => (
 				/>
 			</Box>
 
+			{/* Hero */}
+			<Hero 
+				title="Explore the Best Dining Spots" 
+				description="Discover a variety of restaurants, cafes, and more in Brighton & Hove."
+			/>
+
 			{/* Dynamically render CardCarousels based on venueTypes */}
 			{venueCategory.venueTypes.map((type) => (
 				<CardCarousel
 					key={type.slug}
 					title={type.name}
 					venues={type.venues}
-					seeMoreLink={`/eat/${type.slug}`} // Update this link as needed
+					seeMoreLink={`/types/${type.slug}`}
 				/>
 			))}
 		</Container>
